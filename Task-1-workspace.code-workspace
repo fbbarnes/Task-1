@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"name": "Task-1",
+			"path": "."
+		}
+	],
+	"settings": {
+		"python.pythonPath": "/Users/frederik/env/bin/python"
+	}
+}
