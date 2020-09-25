@@ -174,26 +174,25 @@ def Loop(params):
     return distance
 
 
-def GradLoop(params, no_layers):
+def UpdateParameters(params, gamma, no_layers):
 
-    grad = np.zeros(np.size(params))
+    grad_Loop = np.zeros(np.size(params))
+    new_params = np.zeros(np.shape(params))
 
     deriv_params = params.flatten()
-    #print("GradLoop no_layers:", no_layers)
     deriv_params = np.append(deriv_params, no_layers)
-    #print("deri_params shape in GradLoop", np.shape(deriv_params))
 
-    for j in range(0, np.size(grad)):
-        grad[j] = AQGD().deriv(j, deriv_params, Loop)
+    for j in range(0, np.size(grad_Loop)):
+        grad_Loop[j] = AQGD().deriv(j, deriv_params, Loop)
 
-    grad = np.reshape(grad, np.shape(params))
+    grad_Loop = np.reshape(grad_Loop, np.shape(new_params))
 
-    return grad
+    new_params = params - gamma * grad_Loop
+
+    return new_params, grad_Loop
 
 
-
-
-def OptimiseParameters(no_loops,no_layers, params_init, gamma_init):
+def OptimiseParameters(no_loops,no_layers, params_init, gamma):
 
     distances = np.zeros(no_loops)
 
@@ -201,9 +200,7 @@ def OptimiseParameters(no_loops,no_layers, params_init, gamma_init):
 
     grads_Loop  = np.zeros((no_loops-1,no_layers,2,4))
 
-    gammas = np.zeros(no_loops-1)
 
-    #converged = False
 
     loops_done =0
     
@@ -212,83 +209,70 @@ def OptimiseParameters(no_loops,no_layers, params_init, gamma_init):
         print("Loop ", i)
         
         if i == 0:
+            print("gamma", gamma)
             parameters[i] = params_init
             distances[i] = Loop(np.append(parameters[i], no_layers))
-            #print("Distance: ", distances[i])
-            #print("no_layers: ", no_layers)
-            #print("shape parameters", np.shape(parameters[i]))
-            #print("shape params_init", np.shape(params_init[i]))
-
-            gammas[i] = gamma_init
-            grads_Loop[i] = GradLoop(params_init, no_layers)
-            #print("grads_Loop0 calculated")
-            
+            print("Distance: ", distances[i])
+            print("shape parameters[i]:", np.shape(params_init))
+            print("parameters", parameters)
             loops_done += 1
 
-        elif i ==1:
 
-            parameters[i] = parameters[i-1] - gammas[i-1] * grads_Loop[i-1]
+        elif i == 1:
+
+
+            print("gamma: ", gamma)
+            parameters[i], grads_Loop[i-1] = UpdateParameters(parameters[i-1], gamma, no_layers)
             distances[i] = Loop(np.append(parameters[i], no_layers))
             print("Distance: ", distances[i])
-            print("gamma ", gammas[i-1])
-
             loops_done += 1
+
+
 
         else:
 
-            grads_Loop[i-1] = GradLoop(parameters[i-1], no_layers)
-            grads_difference = (grads_Loop[i-1] - grads_Loop[i-2]).flatten()
-            params_difference = (parameters[i-1] - parameters[i-2]).flatten()
-            gammas[i-1] = np.abs(np.dot(params_difference,grads_difference) / np.dot(grads_difference, grads_difference))
+            delta_parameters = (parameters[i-1] - parameters[i-2]).flatten()
 
-            parameters[i] = parameters[i-1] - gammas[i-1] * grads_Loop[i-1]
+            delta_grads = (grads_Loop[i-1] - grads_Loop[i-2]).flatten()
+
+
+            #gamma =   np.dot(delta_parameters, delta_grads) / (np.dot(delta_grads,delta_grads))
+            gamma =   np.dot(delta_parameters, delta_parameters) / (np.dot(delta_parameters,delta_grads))
+
+            print("gamma ", gamma)
+    
+            parameters[i], grads_Loop[i-1] = UpdateParameters(parameters[i-1], gamma, no_layers)
             distances[i] = Loop(np.append(parameters[i], no_layers))
             print("Distance: ", distances[i])
-            print("gamma ", gammas[i-1])
             
-            if (  0 > ((distances[i-1] - distances[i])/ distances[i]) > -0.001):
 
-                print("diff", (distances[i] - distances[i-1])/ distances[i])
-
-                #converged = True
-                converged_loop = i
-                print("Converged after loop ", converged_loop)
+            if distances[i] > distances[i-1]:
+                print("Converged after loop ", i)
                 loops_done += 1
-                break
 
-
-            loops_done += 1
+            else:
+                loops_done += 1
 
 
     return parameters[0:loops_done], distances[0:loops_done]
 
-def RandomParameters(no_layers):
-
-    rand_params = 2 * pi * np.random.rand(no_layers, 2, 4)
-
-    return rand_params
 
 
+def GetDistances(layers, no_loops, params_init, gamma):
 
-def GetDistances(layers, no_loops, gamma):
-
-    all_distances = []
+    all_distances = np.zeros((len(layers), no_loops))
 
 
     for i in range(0, len(layers)):
 
         print("Calculating distances for ", layers[i], " layers")
 
-        params_init = RandomParameters(layers[i])
 
-        parameters, distances = OptimiseParameters(no_loops, layers[i], params_init,gamma)
-
-        all_distances.append(distances)
+        parameters, all_distances[i] = OptimiseParameters(no_loops, layers[i], params_init,gamma)
 
 
     print("all_distances ", all_distances)
-
-    min_distances = [np.amin(a) for a in all_distances]
+    min_distances = np.amin(all_distances, axis = 1)
 
     return min_distances
 
@@ -305,20 +289,20 @@ phi = Normalise(phi)
 #initialise circuit parameters
 #set number of layers
 #set number of iterations (loops)
-NO_LOOPS = 100
+NO_LOOPS = 10
 #set initial parameters
 
 #print(np.shape(initial_parameters))
 #create array for layers to consider
-LAYERS_ARRAY = np.arange(1,7)
+LAYERS_ARRAY = np.arange(1,10)
 
-#INITIAL_PARAMETERS = 2 * pi * np.random.rand(LAYERS_ARRAY[0], 2, 4)
+INITIAL_PARAMETERS = 2 * pi * np.random.rand(LAYERS_ARRAY[0], 2, 4)
 
 #set learning rate
 GAMMA = 0.1
 
 
-MINIMUM_DISTANCES = GetDistances(LAYERS_ARRAY,NO_LOOPS,GAMMA)
+MINIMUM_DISTANCES = GetDistances(LAYERS_ARRAY,NO_LOOPS,INITIAL_PARAMETERS,GAMMA)
 
 print(MINIMUM_DISTANCES)
 print(LAYERS_ARRAY)

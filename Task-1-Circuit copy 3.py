@@ -203,7 +203,7 @@ def OptimiseParameters(no_loops,no_layers, params_init, gamma_init):
 
     gammas = np.zeros(no_loops-1)
 
-    #converged = False
+    converged = False
 
     loops_done =0
     
@@ -246,16 +246,15 @@ def OptimiseParameters(no_loops,no_layers, params_init, gamma_init):
             print("Distance: ", distances[i])
             print("gamma ", gammas[i-1])
             
-            if (  0 > ((distances[i-1] - distances[i])/ distances[i]) > -0.001):
+            if (distances[i] > distances[i-1]):
 
-                print("diff", (distances[i] - distances[i-1])/ distances[i])
+                if converged == False:
+                    converged = True
+                    converged_loop = i
+                    print("Converged after loop ", converged_loop)
 
-                #converged = True
-                converged_loop = i
-                print("Converged after loop ", converged_loop)
-                loops_done += 1
-                break
-
+                elif converged == True:
+                    print("Converged after loop ", converged_loop)
 
             loops_done += 1
 
@@ -272,7 +271,7 @@ def RandomParameters(no_layers):
 
 def GetDistances(layers, no_loops, gamma):
 
-    all_distances = []
+    all_distances = np.zeros((len(layers), no_loops))
 
 
     for i in range(0, len(layers)):
@@ -281,14 +280,11 @@ def GetDistances(layers, no_loops, gamma):
 
         params_init = RandomParameters(layers[i])
 
-        parameters, distances = OptimiseParameters(no_loops, layers[i], params_init,gamma)
-
-        all_distances.append(distances)
+        parameters, all_distances[i] = OptimiseParameters(no_loops, layers[i], params_init,gamma)
 
 
     print("all_distances ", all_distances)
-
-    min_distances = [np.amin(a) for a in all_distances]
+    min_distances = np.amin(all_distances, axis = 1)
 
     return min_distances
 
@@ -305,7 +301,7 @@ phi = Normalise(phi)
 #initialise circuit parameters
 #set number of layers
 #set number of iterations (loops)
-NO_LOOPS = 100
+NO_LOOPS = 200
 #set initial parameters
 
 #print(np.shape(initial_parameters))

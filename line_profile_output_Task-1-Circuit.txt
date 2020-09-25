@@ -1,0 +1,261 @@
+Loop  0
+Distance:  1.6125075028808118
+Loop  1
+Distance:  1.5220274931213136
+Loop  2
+Distance:  1.4681998638241305
+Distances:  [1.6125075  1.52202749 1.46819986]
+Final parameters:  [[[5.59192214 4.45257806 2.9832676  1.37484405]
+  [2.63166768 4.44451391 1.39092253 5.11276977]]]
+Target:  [ 0.18434424+0.24950196j  0.04954867-0.00698749j -0.2569968 -0.20348101j
+  0.11747574+0.22424988j  0.20295572-0.11489168j  0.12734596-0.05204723j
+ -0.20573673+0.09439792j -0.00150589-0.07120653j -0.26771096+0.16904266j
+  0.27886973+0.13211974j -0.2427999 -0.03441043j -0.11765939-0.1178595j
+ -0.19652016-0.16037503j -0.30057214-0.30253455j  0.16520345+0.16737441j
+ -0.0977918 +0.07532407j]
+Target normalised  [ 0.18434424+0.24950196j  0.04954867-0.00698749j -0.2569968 -0.20348101j
+  0.11747574+0.22424988j  0.20295572-0.11489168j  0.12734596-0.05204723j
+ -0.20573673+0.09439792j -0.00150589-0.07120653j -0.26771096+0.16904266j
+  0.27886973+0.13211974j -0.2427999 -0.03441043j -0.11765939-0.1178595j
+ -0.19652016-0.16037503j -0.30057214-0.30253455j  0.16520345+0.16737441j
+ -0.0977918 +0.07532407j]
+Solution:  [ 0.03505222+0.j         -0.00616085-0.01101608j  0.04396119-0.01206611j
+  0.0115188 +0.01169519j  0.43473385-0.07905163j  0.10125379+0.12273219j
+ -0.51801485+0.24879303j  0.16923711+0.11907131j -0.02650227-0.01121688j
+ -0.0011329 -0.01030053j  0.03709937+0.00494485j -0.00496662-0.01252857j
+  0.35399031+0.07934757j -0.03728105-0.12519701j  0.47127544-0.02234012j
+  0.08985335+0.14418408j]
+solution normalised  [ 0.03505222+0.j         -0.00616085-0.01101608j  0.04396119-0.01206611j
+  0.0115188 +0.01169519j  0.43473385-0.07905163j  0.10125379+0.12273219j
+ -0.51801485+0.24879303j  0.16923711+0.11907131j -0.02650227-0.01121688j
+ -0.0011329 -0.01030053j  0.03709937+0.00494485j -0.00496662-0.01252857j
+  0.35399031+0.07934757j -0.03728105-0.12519701j  0.47127544-0.02234012j
+  0.08985335+0.14418408j]
+Wrote profile results to Task-1-Circuit.py.lprof
+Timer unit: 1e-06 s
+
+Total time: 0.000235 s
+File: Task-1-Circuit.py
+Function: Probabilities at line 47
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    47                                           @profile
+    48                                           def Probabilities(vector):
+    49                                           
+    50        38        138.0      3.6     58.7      vector_conj = np.conjugate(vector)
+    51        38         77.0      2.0     32.8      vector_sq = vector * vector_conj
+    52                                           
+    53        38         20.0      0.5      8.5      return vector_sq
+
+Total time: 0.000164 s
+File: Task-1-Circuit.py
+Function: Normalise at line 55
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    55                                           @profile
+    56                                           def Normalise(vector):
+    57                                               
+    58         3        135.0     45.0     82.3      vector_sq_sum = np.sum(Probabilities(vector))
+    59         3         27.0      9.0     16.5      vector_normalised = vector/(np.sqrt(vector_sq_sum))
+    60                                           
+    61         3          2.0      0.7      1.2      return vector_normalised
+
+Total time: 0.029274 s
+File: Task-1-Circuit.py
+Function: EvenBlock at line 63
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    63                                           @profile
+    64                                           def EvenBlock(theta,circ):
+    65                                           
+    66        36       2047.0     56.9      7.0      circ.rz(theta[0], 0)
+    67        36       3793.0    105.4     13.0      circ.rz(theta[1], 1)
+    68        36       2204.0     61.2      7.5      circ.rz(theta[2], 2)
+    69        36       1775.0     49.3      6.1      circ.rz(theta[3], 3)
+    70        36       3023.0     84.0     10.3      circ.cz(0, 1)
+    71        36       2977.0     82.7     10.2      circ.cz(0, 2)
+    72        36       2606.0     72.4      8.9      circ.cz(0, 3)
+    73        36       2586.0     71.8      8.8      circ.cz(1, 2)
+    74        36       2741.0     76.1      9.4      circ.cz(1, 3)
+    75        36       2886.0     80.2      9.9      circ.cz(2, 3)
+    76        36       2616.0     72.7      8.9      circ.barrier()
+    77                                           
+    78        36         20.0      0.6      0.1      return circ
+
+Total time: 0.011834 s
+File: Task-1-Circuit.py
+Function: OddBlock at line 80
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    80                                           @profile
+    81                                           def OddBlock(theta,circ):
+    82                                           
+    83        36       2960.0     82.2     25.0      circ.rx(theta[0], 0)
+    84        36       2375.0     66.0     20.1      circ.rx(theta[1], 1)
+    85        36       1857.0     51.6     15.7      circ.rx(theta[2], 2)
+    86        36       1911.0     53.1     16.1      circ.rx(theta[3], 3)
+    87        36       2710.0     75.3     22.9      circ.barrier()
+    88                                           
+    89        36         21.0      0.6      0.2      return circ
+
+Total time: 0.041915 s
+File: Task-1-Circuit.py
+Function: Layer at line 91
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    91                                           @profile
+    92                                           def Layer(Layer_params,circ):
+    93        36         55.0      1.5      0.1      Odd_params = Layer_params[0]
+    94        36         26.0      0.7      0.1      Even_params = Layer_params[1]
+    95                                               
+    96        36      12133.0    337.0     28.9      OddBlock(Odd_params,circ)
+    97        36      29691.0    824.8     70.8      EvenBlock(Even_params,circ)
+    98                                           
+    99        36         10.0      0.3      0.0      return circ
+
+Total time: 0.04696 s
+File: Task-1-Circuit.py
+Function: Circuit at line 101
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   101                                           @profile
+   102                                           def Circuit(Circuit_params):
+   103        36       4598.0    127.7      9.8      circ = QuantumCircuit(4,4)
+   104        72        185.0      2.6      0.4      for layer_params in Circuit_params:
+   105        36      42160.0   1171.1     89.8          Layer(layer_params,circ)
+   106                                           
+   107        36         17.0      0.5      0.0      return circ
+
+Total time: 1.19112 s
+File: Task-1-Circuit.py
+Function: Loop at line 115
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   115                                           @profile
+   116                                           def Loop(params):
+   117                                               #randomise circuit parameters
+   118                                               #print(np.shape(params))
+   119        35        420.0     12.0      0.0      params = np.reshape(params, (no_layers,2,4))
+   120                                               #print(np.shape(params))
+   121                                               
+   122                                               #print("New circuit being constructed...")
+   123                                           
+   124                                               #circuit =QuantumCircuit(qreg_q,creg_c)
+   125                                           
+   126                                           
+   127                                               ''' 
+   128                                               #example parameters
+   129                                               theta = np.array([pi/4,0,pi,0.6])
+   130                                               Layer_params = np.stack((theta,theta*2), axis = 0)
+   131                                               Circuit_params = np.stack((Layer_params, Layer_params*2), axis =0)
+   132                                               print(Circuit_params)
+   133                                               print(np.shape(Circuit_params))
+   134                                           
+   135                                               '''
+   136                                           
+   137                                               #make circuit
+   138                                           
+   139        35      45942.0   1312.6      3.9      circuit = Circuit(params)
+   140                                           
+   141                                           
+   142                                               #results
+   143        35    1135923.0  32454.9     95.4      result = execute(circuit, backend = simulator).result()
+   144                                           
+   145                                               #reinitialise circuit
+   146                                           
+   147                                               
+   148                                           
+   149        35       1010.0     28.9      0.1      statevector = result.get_statevector()
+   150                                           
+   151                                               #print("Target: ",phi)
+   152                                           
+   153        35        280.0      8.0      0.0      difference = statevector - phi
+   154        35       1637.0     46.8      0.1      distance = np.sum(Probabilities(difference))
+   155                                               #print("Distance:", distance)
+   156                                           
+   157                                           
+   158                                           
+   159                                               # Outputs
+   160                                               #print('result ', statevector)
+   161                                               #print(np.sum(Probabilities(statevector)))
+   162                                               #print('target ', phi)
+   163                                               #print(np.sum(Probabilities(phi)))
+   164                                               #print('difference', difference)
+   165                                               #print(np.sum(Probabilities(difference)))
+   166                                               #print('distance', distance)
+   167                                               #print(circuit)
+   168                                               #circuit.draw(output='mpl')
+   169                                               #plt.show()
+   170        35       5877.0    167.9      0.5      circuit =QuantumCircuit(4,4)
+   171                                           
+   172        35         28.0      0.8      0.0      return distance
+
+Total time: 0.751024 s
+File: Task-1-Circuit.py
+Function: UpdateParameters at line 174
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   174                                           @profile
+   175                                           def UpdateParameters(params, gamma):
+   176                                           
+   177         2         31.0     15.5      0.0      grad_Loop = np.zeros(np.size(params))
+   178         2         17.0      8.5      0.0      new_params = np.zeros(np.shape(params))
+   179                                           
+   180                                           
+   181        18         21.0      1.2      0.0      for j in range(0, np.size(grad_Loop)):
+   182        16     750909.0  46931.8    100.0          grad_Loop[j] = AQGD().deriv(j, params.flatten(), Loop)
+   183                                           
+   184         2         33.0     16.5      0.0      grad_Loop = np.reshape(grad_Loop, np.shape(new_params))
+   185                                           
+   186         2         12.0      6.0      0.0      new_params = params - gamma * grad_Loop
+   187                                           
+   188         2          1.0      0.5      0.0      return new_params
+
+Total time: 1.19393 s
+File: Task-1-Circuit.py
+Function: OptimiseParameters at line 190
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   190                                           @profile
+   191                                           def OptimiseParameters(no_loops,no_layers, params_init, gamma):
+   192                                           
+   193         1          3.0      3.0      0.0      distances = np.zeros(no_loops)
+   194                                           
+   195         1          3.0      3.0      0.0      parameters = np.zeros((no_loops,no_layers,2,4))
+   196                                           
+   197         1          1.0      1.0      0.0      loops_done =0
+   198                                               
+   199                                           
+   200         4          4.0      1.0      0.0      for i in range(0,no_loops):
+   201         3         10.0      3.3      0.0          print("Loop ", i)
+   202                                                   
+   203         3          2.0      0.7      0.0          if i == 0:
+   204         1          4.0      4.0      0.0              parameters[i] = params_init
+   205         1     400193.0 400193.0     33.5              distances[i] = Loop(parameters[i])
+   206         1         13.0     13.0      0.0              print("Distance: ", distances[i])
+   207         1          1.0      1.0      0.0              loops_done += 1
+   208                                                   else:
+   209         2     751080.0 375540.0     62.9              parameters[i] = UpdateParameters(parameters[i-1], gamma)
+   210         2      42594.0  21297.0      3.6              distances[i] = Loop(parameters[i])
+   211         2         16.0      8.0      0.0              print("Distance: ", distances[i])
+   212                                                       
+   213                                           
+   214         2          4.0      2.0      0.0              if distances[i] > distances[i-1]:
+   215                                                           print("Converged after loop ", i)
+   216                                                           print("loops done ", loops_done)
+   217                                                           break
+   218                                                       else:
+   219         2          2.0      1.0      0.0                  loops_done += 1
+   220                                           
+   221                                           
+   222         1          3.0      3.0      0.0      return parameters[0:loops_done], distances[0:loops_done]
+
