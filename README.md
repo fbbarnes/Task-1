@@ -48,6 +48,9 @@ where Δθ = θ<sub>n</sub> - θ<sub>n-1</sub> and Δε = ∇ε(θ<sub>n</sub>) 
 
 For each new set of variational parameters, the distance was calculated and stored. For each number of layers, L, gradient descent would be iterated n times and ε taken as the minimum value of the distances. This was repeated for each L and ε was plotted against L using matplotlib. 
 
+##### 2.3
+The code for the task was written in python and is in the file [Task-1-Circuit.py](https://github.com/fbbarnes/Task-1/blob/master/Task-1-Circuit.py). The Qiskit, NumPy, and Matplotlib libraries are required to run it. Running it will produce a graph like that below.
+
 ## 3 Results
 A plot of the results for 1 ≤ L ≤ 6 and n = 100 is presented below. 
 
