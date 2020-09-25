@@ -47,4 +47,14 @@ For each new set of variational parameters, the distance was calculated and stor
 ## 3 Results
 A plot of the results for 1 ≤ L ≤ 9 and n = 100 is presented below. 
 
-Through trial and error it was found that roughly less than 100 iterations were sufficient to converge on a value for ε for each L < 10. However, for values of L ≤ 3, the algorithim tended to find local minima as repeated runs gave different values for ε. This suggests that the Barzilai-Borwei method for learning parameter adjustment may be improved upon. Nevertheless, the Barzilai-Borwei method was more successful than use of just a constant learning rate. For L ≥ 4, the algorithm consistently produced values for ε << 10<sup>-10<\sup>, ie approximately zero. This corresponds to 24 CZ gates, 16 R<sub>x</sub>, and 16 R<sub>z</sub> gates. 
+Through trial and error it was found that roughly less than 100 iterations were sufficient to converge on a value for ε for each L < 10. However, for values of L ≤ 3, the algorithim tended to find local minima as repeated runs gave different values for ε. This suggests that the Barzilai-Borwei method for learning parameter adjustment may be improved upon. Nevertheless, the Barzilai-Borwei method was more successful than use of just a constant learning rate. 
+
+For L ≥ 5, the algorithm produced values for ε << 10<sup>-25</sup>, ie approximately zero.  This is consistent with the findings in https://arxiv.org/pdf/quant-ph/0602174.pdf, which proposes a general quantum circuit pattern that can be used to implement any n-qubit quantum gate. The circuit shares a similar structure to the one used in this task by having layers of one-qubit gates and cascades of controlled Pauli gates. It is shown that n+1 layers are required, consistent with the results here. 
+
+## 4 Further questions to explore
+##### 4.1 Is it possible to use fewer/different gates and still successfully minimise the distance?
+arXiv:quant-ph/0407010  states 2<sup>n+1</sup> − 2 one-qubit rotations and ⌈1/4 * (2<sup>n+1</sup> − 3n − 2)⌉ CNOT gates is the lower bound for the number of qubits to produce an arbitary state with n qubits. 
+##### 4.2 Is it possible to get faster results using a different optimisation algorithm?
+Even with only a handful of qubits and layers the calculations are intensive on a classical computer. Would different classical simulations and algorithms help us to explore larger quantum circuits? 
+##### 4.3 What is the optimal number of layers?
+The results here show that increasing the depth of the circuit for a fixed number of qubits will not help one get a more precise answer after a certain point. But will using a smaller/larger number of layers require fewer/more iterations to find |φ>? What is the associated computational cost? This question particuarly important went considering NISQs where noise and coherence times play an important role. 
