@@ -9,11 +9,11 @@ The task is described as follows:
 ##### 1.1
 Implement, on a quantum simulator of your choice, the following 4 qubit state |(ψ)>:
 
-![circuit diagram](https://github.com/fbbarnes/Task-1/blob/master/Screenshot%202020-09-25%20at%2005.02.32.png)
+![circuit diagram](https://github.com/fbbarnes/Task-1/blob/master/figures/circuit-diagram.png)
 
 Where the number of layers, denoted with L, has to be considered as a parameter. We call ¨Layer¨ the combination of 1 yellow + 1 green block, so, for example, U<sub>1</sub> + U<sub>2</sub> is a layer. The odd/even variational blocks are given by:
 
-![block diagram](https://github.com/fbbarnes/Task-1/blob/master/circuit%20blocks.png)
+![block diagram](https://github.com/fbbarnes/Task-1/blob/master/figures/blocks-diagram.png)
 
 The angles θ<sub>i</sub>, are variational parameters, lying in the interval (0, 2), initialized at random. Double qubit gates are CZ gates.
 
@@ -54,7 +54,7 @@ The code for the task was written in python and is in the file [Task-1-Circuit.p
 ## 3 Results
 A plot of the results for 1 ≤ L ≤ 6 and n = 100 is presented below. 
 
-![plot of results](https://github.com/fbbarnes/Task-1/blob/master/1-6L%20g%3DBB%20i%3C100.png)
+![plot of results](https://github.com/fbbarnes/Task-1/blob/master/figures/example-plot.png)
 
 Through trial and error it was found that roughly less than 100 iterations were sufficient to converge on a value for ε for each L < 10. However, for values of L ≤ 3, the algorithim tended to find local minima as repeated runs gave different values for ε. This suggests that the Barzilai-Borwei method for learning parameter adjustment may be improved upon. Nevertheless, the Barzilai-Borwei method was more successful than use of just a constant learning rate. 
 
