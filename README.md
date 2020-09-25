@@ -11,6 +11,8 @@ Implement, on a quantum simulator of your choice, the following 4 qubit state |(
 
 Where the number of layers, denoted with L, has to be considered as a parameter. We call ¨Layer¨ the combination of 1 yellow + 1 green block, so, for example, U<sub>1</sub> + U<sub>2</sub> is a layer. The odd/even variational blocks are given by:
 
+![alt text](https://github.com/fbbarnes/Task-1/blob/master/circuit%20blocks.png)
+
 The angles θ<sub>i</sub>, are variational parameters, lying in the interval (0, 2), initialized at random. Double qubit gates are CZ gates.
 
 ##### 1.2
@@ -53,7 +55,7 @@ For L ≥ 5, the algorithm produced values for ε << 10<sup>-25</sup>, ie approx
 
 ## 4 Further questions to explore
 ##### 4.1 Is it possible to use fewer/different gates and still successfully minimise the distance?
-arXiv:quant-ph/0407010  states 2<sup>n+1</sup> − 2 one-qubit rotations and ⌈1/4 * (2<sup>n+1</sup> − 3n − 2)⌉ CNOT gates is the lower bound for the number of qubits to produce an arbitary state with n qubits. 
+https://arXiv:quant-ph/0407010  states 2<sup>n+1</sup> − 2 one-qubit rotations and ⌈1/4 * (2<sup>n+1</sup> − 3n − 2)⌉ CNOT gates is the lower bound for the number of qubits to produce an arbitary state with n qubits. 
 ##### 4.2 Is it possible to get faster results using a different optimisation algorithm?
 Even with only a handful of qubits and layers the calculations are intensive on a classical computer. Would different classical simulations and algorithms help us to explore larger quantum circuits? 
 ##### 4.3 What is the optimal number of layers?
