@@ -9,6 +9,8 @@ The task is described as follows:
 ##### 1.1
 Implement, on a quantum simulator of your choice, the following 4 qubit state |(ψ)>:
 
+![alt text](https://github.com/fbbarnes/Task-1/blob/master/Screenshot%202020-09-25%20at%2005.02.32.png)
+
 Where the number of layers, denoted with L, has to be considered as a parameter. We call ¨Layer¨ the combination of 1 yellow + 1 green block, so, for example, U<sub>1</sub> + U<sub>2</sub> is a layer. The odd/even variational blocks are given by:
 
 ![alt text](https://github.com/fbbarnes/Task-1/blob/master/circuit%20blocks.png)
