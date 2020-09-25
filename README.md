@@ -9,11 +9,11 @@ The task is described as follows:
 ##### 1.1
 Implement, on a quantum simulator of your choice, the following 4 qubit state |(ψ)>:
 
-![circuit diagram](https://github.com/fbbarnes/Task-1/blob/master/Screenshot%202020-09-25%20at%2005.02.32.png)
+![circuit diagram](https://github.com/fbbarnes/Task-1/blob/master/figures/circuit-diagram.png)
 
 Where the number of layers, denoted with L, has to be considered as a parameter. We call ¨Layer¨ the combination of 1 yellow + 1 green block, so, for example, U<sub>1</sub> + U<sub>2</sub> is a layer. The odd/even variational blocks are given by:
 
-![block diagram](https://github.com/fbbarnes/Task-1/blob/master/circuit%20blocks.png)
+![block diagram](https://github.com/fbbarnes/Task-1/blob/master/figures/blocks-diagram.png)
 
 The angles θ<sub>i</sub>, are variational parameters, lying in the interval (0, 2), initialized at random. Double qubit gates are CZ gates.
 
@@ -46,19 +46,19 @@ The learning rate, γ, was varied using the Barzilai-Borwei method. This method 
 
 where Δθ = θ<sub>n</sub> - θ<sub>n-1</sub> and Δε = ∇ε(θ<sub>n</sub>) - ∇ε(θ<sub>n-1</sub>). γ<sub>0</sub> was taken as 0.1. 
 
-For each new set of variational parameters, the distance was calculated and stored. For each number of layers, L, gradient descent would be iterated n times and ε taken as the minimum value of the distances. This was repeated for each L and ε was plotted against L using matplotlib. 
+For each new set of variational parameters, the distance was calculated and stored. For each number of layers, L, gradient descent would be iterated n times and ε taken as the minimum value of the distances. If the improvement between iterations was less than 0.1% then the process was stopped. This was repeated for each L and ε was plotted against L using matplotlib. 
 
 ##### 2.3
 The code for the task was written in python and is in the file [Task-1-Circuit.py](https://github.com/fbbarnes/Task-1/blob/master/Task-1-Circuit.py). The Qiskit, NumPy, and Matplotlib libraries are required to run it. Running it will produce a graph like that below.
 
 ## 3 Results
-A plot of the results for 1 ≤ L ≤ 6 and n = 100 is presented below. 
+A plot of the results for 1 ≤ L ≤ 9 and n ≤ 200 is presented below. 
 
-![plot of results](https://github.com/fbbarnes/Task-1/blob/master/1-6L%20g%3DBB%20i%3C100.png)
+![plot of results](https://github.com/fbbarnes/Task-1/blob/master/figures/example-plot.png)
 
-Through trial and error it was found that roughly less than 100 iterations were sufficient to converge on a value for ε for each L < 10. However, for values of L ≤ 3, the algorithim tended to find local minima as repeated runs gave different values for ε. This suggests that the Barzilai-Borwei method for learning parameter adjustment may be improved upon. Nevertheless, the Barzilai-Borwei method was more successful than use of just a constant learning rate. 
+Through trial and error it was found that roughly less than 200 iterations were sufficient to converge on a value for ε for each L < 10. However, for values of L ≤ 3, the algorithim tended to give different values for ε. This suggests that either local minima were found and possibly that the choice of the Barzilai-Borwei method for learning parameter adjustment may be improved upon. Or, the minimum distance for small layers was dpendent on what target state was randomly generated. Nevertheless, the Barzilai-Borwei method was more successful than use of just a constant learning rate. 
 
-For L ≥ 5, the algorithm produced values for ε << 10<sup>-25</sup>, ie approximately zero.  This is consistent with the findings in https://arxiv.org/pdf/quant-ph/0602174.pdf, which proposes a general quantum circuit pattern that can be used to implement any n-qubit quantum gate. The circuit shares a similar structure to the one used in this task by having layers of one-qubit gates and cascades of controlled Pauli gates. It is shown that n+1 layers are required, consistent with the results here. 
+For L ≥ 5, the algorithm produced values for that are approximately zero.  This is consistent with the findings in https://arxiv.org/pdf/quant-ph/0602174.pdf, which proposes a general quantum circuit pattern that can be used to implement any n-qubit quantum gate. The circuit shares a similar structure to the one used in this task by having layers of one-qubit gates and cascades of controlled Pauli gates. It is shown that n+1 layers are required, consistent with the results here. 
 
 ## 4 Further questions to explore
 ##### 4.1 Is it possible to use fewer/different gates and still successfully minimise the distance?
