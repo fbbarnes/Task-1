@@ -12,7 +12,7 @@ from qiskit.compiler import transpile, assemble
 from qiskit.tools.visualization import circuit_drawer
 # Loading your IBM Q account(s)
 #IBMQ.save_account('8067a84497c769a00d40ce170debac2c1337737eae8b4452ec069158476f75a136475f809fd5db20e72d3662a7937bb8d9a845817dd486b03db4b8dcc1319560')
-provider = IBMQ.load_account()
+#provider = IBMQ.load_account()
 
 
 
@@ -305,12 +305,12 @@ phi = Normalise(phi)
 #initialise circuit parameters
 #set number of layers
 #set number of iterations (loops)
-NO_LOOPS = 100
+NO_LOOPS = 200
 #set initial parameters
 
 #print(np.shape(initial_parameters))
 #create array for layers to consider
-LAYERS_ARRAY = np.arange(1,7)
+LAYERS_ARRAY = np.arange(1,10)
 
 #INITIAL_PARAMETERS = 2 * pi * np.random.rand(LAYERS_ARRAY[0], 2, 4)
 
