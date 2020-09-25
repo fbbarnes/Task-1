@@ -4,47 +4,32 @@
 #pylint: disable=no-member
 
 
-# Importing standard Qiskit libraries and configuring account
+# Importing standard Qiskit libraries
 from qiskit import QuantumCircuit, execute, Aer, IBMQ
-from qiskit.compiler import transpile, assemble
-#from qiskit.tools.jupyter import *
-#from qiskit.visualization import *
-from qiskit.tools.visualization import circuit_drawer
-# Loading your IBM Q account(s)
-#IBMQ.save_account('8067a84497c769a00d40ce170debac2c1337737eae8b4452ec069158476f75a136475f809fd5db20e72d3662a7937bb8d9a845817dd486b03db4b8dcc1319560')
-#provider = IBMQ.load_account()
-
-
-
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
+from qiskit.compiler import transpile, assemble
+from qiskit.tools.visualization import circuit_drawer
 from qiskit.quantum_info import random_statevector, Statevector
+from qiskit.tools.visualization import plot_bloch_multivector
+from qiskit.aqua.components.optimizers import AQGD
+# Import numpy
 import numpy as np
+# Import matplotlib
 import matplotlib
 import matplotlib.pyplot as plt
-#get_ipython().run_line_magic('matplotlib', 'inline')
-from qiskit.tools.visualization import plot_bloch_multivector
 
 
-
-from qiskit.aqua.components.optimizers import AQGD
-
-#set backend
+#Set Qiskit backen to statevector
 simulator = Aer.get_backend('statevector_simulator')
-
-#set registers
-#no_qreg = 4
-#no_creg = no_qreg
-
-#qreg_q = QuantumRegister(4, 'q')
-#creg_c = ClassicalRegister(4, 'c')
-#circuit = QuantumCircuit(qreg_q, creg_c)
 
 
 #define constants
 pi = np.pi
 
+
 #function definitions
 
+#calclate state probabilities from a statevector
 def Probabilities(vector):
 
     vector_conj = np.conjugate(vector)
@@ -53,6 +38,7 @@ def Probabilities(vector):
     return vector_sq
 
 
+#normalise a statevector
 def Normalise(vector):
     
     vector_sq_sum = np.sum(Probabilities(vector))
@@ -61,6 +47,7 @@ def Normalise(vector):
     return vector_normalised
 
 
+#function to create paramaterised gates for even block in circuit
 def EvenBlock(theta,circ):
 
     circ.rz(theta[0], 0)
@@ -78,6 +65,7 @@ def EvenBlock(theta,circ):
     return circ
 
 
+#function to create paramaterised gates for odd block in circuit
 def OddBlock(theta,circ):
 
     circ.rx(theta[0], 0)
@@ -89,6 +77,7 @@ def OddBlock(theta,circ):
     return circ
 
 
+#function to create paramaterised layers consisting of both blocks in circuit
 def Layer(Layer_params,circ):
     Odd_params = Layer_params[0]
     Even_params = Layer_params[1]
@@ -99,6 +88,7 @@ def Layer(Layer_params,circ):
     return circ
 
 
+#function to create paramaterised circuit consisting of multiple layers according to dimensions of parameters
 def Circuit(Circuit_params):
     circ = QuantumCircuit(4,4)
     for layer_params in Circuit_params:
@@ -107,81 +97,39 @@ def Circuit(Circuit_params):
     return circ
 
 
-
-
-    
-
-#def Loop(circuit):
-
+#function to loop through in order to execute circuit with given an array
+# of the variational parameters with the no of layers as the last element and 
+# calculate distances (|| |(ψ(θ))> - |(φ(θ))> ||) given parameters
+# note: uses global PHI variable for target state vector
 def Loop(params):
     #randomise circuit parameters
-    #print(np.shape(params))
     no_layers = int(params[len(params)-1])
     params = np.delete(params, len(params)-1)
     params = np.reshape(params, (no_layers,2,4))
-    #print(np.shape(params))
-    
-    #print("New circuit being constructed...")
-
-    #circuit =QuantumCircuit(qreg_q,creg_c)
-
-
-    ''' 
-    #example parameters
-    theta = np.array([pi/4,0,pi,0.6])
-    Layer_params = np.stack((theta,theta*2), axis = 0)
-    Circuit_params = np.stack((Layer_params, Layer_params*2), axis =0)
-    print(Circuit_params)
-    print(np.shape(Circuit_params))
-
-    '''
 
     #make circuit
-
     circuit = Circuit(params)
-
 
     #results
     result = execute(circuit, backend = simulator).result()
-
-    #reinitialise circuit
-
-    
-
     statevector = result.get_statevector()
 
-    #print("Target: ",phi)
-
-    difference = statevector - phi
+    #outputs
+    difference = statevector - PHI
     distance = np.sum(Probabilities(difference))
-    #print("Distance:", distance)
 
-
-
-    # Outputs
-    #print('result ', statevector)
-    #print(np.sum(Probabilities(statevector)))
-    #print('target ', phi)
-    #print(np.sum(Probabilities(phi)))
-    #print('difference', difference)
-    #print(np.sum(Probabilities(difference)))
-    #print('distance', distance)
-    #print(circuit)
-    #circuit.draw(output='mpl')
-    #plt.show()
+    #reinitialise circuit
     circuit =QuantumCircuit(4,4)
 
     return distance
 
-
+#function to find gradient of Loop() at the parameters given for a given no of layers
 def GradLoop(params, no_layers):
 
     grad = np.zeros(np.size(params))
 
     deriv_params = params.flatten()
-    #print("GradLoop no_layers:", no_layers)
     deriv_params = np.append(deriv_params, no_layers)
-    #print("deri_params shape in GradLoop", np.shape(deriv_params))
 
     for j in range(0, np.size(grad)):
         grad[j] = AQGD().deriv(j, deriv_params, Loop)
@@ -192,7 +140,8 @@ def GradLoop(params, no_layers):
 
 
 
-
+#function to optimise the parameters such as to minimise the distance between the
+# target state and circuit state using gradient descent with the Barzilai-Borwei method. 
 def OptimiseParameters(no_loops,no_layers, params_init, gamma_init):
 
     distances = np.zeros(no_loops)
@@ -203,8 +152,6 @@ def OptimiseParameters(no_loops,no_layers, params_init, gamma_init):
 
     gammas = np.zeros(no_loops-1)
 
-    #converged = False
-
     loops_done =0
     
 
@@ -214,14 +161,10 @@ def OptimiseParameters(no_loops,no_layers, params_init, gamma_init):
         if i == 0:
             parameters[i] = params_init
             distances[i] = Loop(np.append(parameters[i], no_layers))
-            #print("Distance: ", distances[i])
-            #print("no_layers: ", no_layers)
-            #print("shape parameters", np.shape(parameters[i]))
-            #print("shape params_init", np.shape(params_init[i]))
 
             gammas[i] = gamma_init
             grads_Loop[i] = GradLoop(params_init, no_layers)
-            #print("grads_Loop0 calculated")
+
             
             loops_done += 1
 
@@ -250,7 +193,6 @@ def OptimiseParameters(no_loops,no_layers, params_init, gamma_init):
 
                 print("diff", (distances[i] - distances[i-1])/ distances[i])
 
-                #converged = True
                 converged_loop = i
                 print("Converged after loop ", converged_loop)
                 loops_done += 1
@@ -262,6 +204,7 @@ def OptimiseParameters(no_loops,no_layers, params_init, gamma_init):
 
     return parameters[0:loops_done], distances[0:loops_done]
 
+#function to create random parameters for the gates in the circuit for a given number of layers
 def RandomParameters(no_layers):
 
     rand_params = 2 * pi * np.random.rand(no_layers, 2, 4)
@@ -269,7 +212,9 @@ def RandomParameters(no_layers):
     return rand_params
 
 
-
+#function to calculate minimum distances achieved through optimisation
+#for a given an array for the  layers to use, no of iterations (loops) and initial learning rate
+#also outputs all intermediate distances into console
 def GetDistances(layers, no_loops, gamma):
 
     all_distances = []
@@ -294,74 +239,45 @@ def GetDistances(layers, no_loops, gamma):
 
 
 
-#create random target state phi
-phi = np.random.uniform(-1, 1, 2**4) + np.random.uniform(-1, 1, 2**4) * 1j
+#GLOBAL VARIABLES
+#create random target state PHI = |(φ(θ))>
+PHI = np.random.uniform(-1, 1, 2**4) + np.random.uniform(-1, 1, 2**4) * 1j
 #normalise phi
-phi = Normalise(phi)
-#check phi is normalised
-#print(np.sum(Probabilities(phi)))
+PHI = Normalise(PHI)
 
-
-#initialise circuit parameters
-#set number of layers
 #set number of iterations (loops)
 NO_LOOPS = 200
-#set initial parameters
-
-#print(np.shape(initial_parameters))
 #create array for layers to consider
 LAYERS_ARRAY = np.arange(1,10)
 
-#INITIAL_PARAMETERS = 2 * pi * np.random.rand(LAYERS_ARRAY[0], 2, 4)
-
-#set learning rate
+#set initial learning rate
 GAMMA = 0.1
 
-
+#Calculate the minimum distances (ε) for the desired layers,
+# no. of iterations and inital learning rate
 MINIMUM_DISTANCES = GetDistances(LAYERS_ARRAY,NO_LOOPS,GAMMA)
 
+
+
+
+#OUTPUT RESULTS
 print(MINIMUM_DISTANCES)
 print(LAYERS_ARRAY)
 
-#plt.plot(LAYERS_ARRAY, MINIMUM_DISTANCES)
-#plt.show()
-
+#CREATE PLOT
+#set fonts
 title_font = {'fontname':'Arial', 'size':'14', 'color':'black', 'weight':'normal',
-              'verticalalignment':'center'} # Bottom vertical alignment for more space
+              'verticalalignment':'center'} 
 axis_font = {'fontname':'Arial', 'size':'20'}
 
+#plot ε against no of layers
 plt.plot(LAYERS_ARRAY, MINIMUM_DISTANCES)
 
-
+#label axis
 plt.xlabel("Layers", **axis_font)
 plt.ylabel(r"$\epsilon$", **axis_font)
-#plt.title("Minimum distance after 100 iterations and learning rate of 0.1", **title_font)
 
-
-plt.savefig("test.png")
+#save figure
+plt.savefig("Plot.png")
+#plot in console
 plt.show()
-
-
-
-
-'''
-parameters, distances = OptimiseParameters(no_loops, no_layers, initial_parameters,gamma)
-
-
-
-final_circuit = Circuit(parameters[(parameters.shape[0]-1)])
-
-final_result = execute(final_circuit, backend = simulator).result()
-
-final_statevector = final_result.get_statevector()
-
-
-print("Distances: ", distances)
-print("Final parameters: ", parameters[(parameters.shape[0]-1)])
-print("Target: ", phi)
-print("Solution: ", final_statevector)
-
-#phi_bloch = plot_bloch_multivector(phi, title='phi')
-#final_bloch = plot_bloch_multivector(final_statevector, title='final_statevector')
-#plt.show()
-'''
