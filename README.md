@@ -1,7 +1,7 @@
 # Task-1
 
 ## 0 Introduction
-This repository contains the work carried out as part of the screening process for the Quantum Open Source Foundation mentorship programme. It aims to explore the problem set out in Task 1.
+This repository contains the work carried out as part of the screening process for the Quantum Open Source Foundation mentorship programme. It aims to explore the problem set out in Task 1. [Code.](https://github.com/fbbarnes/Task-1/blob/master/Task-1-Circuit.py)
 
 ## 1 Task
 The task is described as follows:
